@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #131210;
+  --color-bg-elevated: #1c1a17;
+  --color-cream: #fff5e6;
+  --color-muted: #c9c2b6;
+  --color-accent: #9d8771;
+  --color-accent-light: #e9dcc7;
+  /* Navbar / button surface: font color at 20% opacity */
+  --color-glass: rgba(255, 245, 230, 0.2);
+  --color-glass-border: rgba(255, 245, 230, 0.16);
+
+  /* Equal horizontal margin shared by every section, matching the Figma frames */
+  --edge-padding: clamp(1.25rem, 4.5vw, 6rem);
+
+  /* Shared fluid size for every major section heading (Hero, Flagship, Focus Areas, CTA) */
+  --heading-size: clamp(3rem, 2.4rem + 2.3vw, 5.25rem);
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-bg-elevated: var(--color-bg-elevated);
+  --color-cream: var(--color-cream);
+  --color-muted: var(--color-muted);
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-accent-light);
+  --color-glass: var(--color-glass);
+  --color-glass-border: var(--color-glass-border);
+
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-instrument-serif);
+  --font-helvetica: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge */
+  overscroll-behavior-y: none;
+}
+
+/* Site-wide, including any future pages — no text should be selectable/draggable */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Chromium Edge */
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-cream);
+  overscroll-behavior-y: none;
+}
+
+.edge {
+  padding-left: var(--edge-padding);
+  padding-right: var(--edge-padding);
+}
+
+/* Drop shadow: X 0, Y 0, Blur 20, Spread 0 — same color as the text itself */
+.text-glow {
+  text-shadow: 0 0 20px rgba(255, 245, 230, 0.7);
+}
+
+@keyframes dot-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    box-shadow: 0 0 0px rgba(255, 245, 230, 0);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 6px rgba(255, 245, 230, 0.9);
+  }
+}
+
+.pulse-dot {
+  animation: dot-pulse 1.8s ease-in-out infinite;
+}
