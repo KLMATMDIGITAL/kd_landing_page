@@ -20,9 +20,6 @@ export const metadata: Metadata = {
   title: "KLMATM DIGITAL — Engineering purposeful digital products.",
   description:
     "We design and deploy high-utility mobile applications and targeted digital marketplaces engineered to simplify complex workflows and connect regional ecosystems.",
-  icons: {
-    icon: "/images/kd_logo.png",
-  },
 };
 
 export default function RootLayout({
