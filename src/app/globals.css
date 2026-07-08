@@ -19,6 +19,7 @@
 }
 
 @theme inline {
+  
   --color-bg: var(--color-bg);
   --color-bg-elevated: var(--color-bg-elevated);
   --color-cream: var(--color-cream);
