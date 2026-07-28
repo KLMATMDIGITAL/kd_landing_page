@@ -13,6 +13,7 @@ import { motion, useAnimation } from "framer-motion";
 
 type PageTransitionContextValue = {
   navigate: (href: string) => void;
+  isTransitioning: boolean;
 };
 
 const PageTransitionContext = createContext<PageTransitionContextValue | null>(
@@ -147,7 +148,7 @@ export default function PageTransitionProvider({
   }, [pathname, openDoors]);
 
   return (
-    <PageTransitionContext.Provider value={{ navigate }}>
+    <PageTransitionContext.Provider value={{ navigate, isTransitioning: active }}>
       {children}
       <motion.div
         initial={{ x: "-100%" }}

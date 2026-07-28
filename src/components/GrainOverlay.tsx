@@ -1,6 +1,9 @@
 "use client";
 
 import { GrainGradient } from "@paper-design/shaders-react";
+import { useGrainGradientController } from "@/lib/useGrainGradientController";
+
+const SPEED = 1;
 
 // The grain-only counterpart to HeroGrainGradient — same shape/rotation/noise
 // "DNA" for a consistent feel, but the color entries match colorBack exactly
@@ -15,6 +18,7 @@ import { GrainGradient } from "@paper-design/shaders-react";
 //    color, which read as a hard black block. No blend mode needed at all
 //    once the colors already match the background.
 export default function GrainOverlay({ className = "" }: { className?: string }) {
+  const { shaderRef, key } = useGrainGradientController(SPEED);
   return (
     <div
       className={`pointer-events-none absolute inset-0 ${className}`}
@@ -24,6 +28,8 @@ export default function GrainOverlay({ className = "" }: { className?: string })
           briefly clears the canvas, and without this it flashes stark black
           instead of this matching dark tone. */}
       <GrainGradient
+        key={key}
+        ref={shaderRef}
         className="h-full w-full"
         colors={["#1a1918"]}
         colorBack="#1a1918"
@@ -31,7 +37,7 @@ export default function GrainOverlay({ className = "" }: { className?: string })
         intensity={0.15}
         noise={0.6}
         shape="corners"
-        speed={1}
+        speed={SPEED}
         scale={1}
         rotation={220}
         offsetX={0}

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/third-parties": "^16.2.12",
+    "@paper-design/shaders": "^0.0.77",
     "@paper-design/shaders-react": "^0.0.77",
     "@vercel/speed-insights": "^2.0.0",
     "canvas-confetti": "^1.9.4",

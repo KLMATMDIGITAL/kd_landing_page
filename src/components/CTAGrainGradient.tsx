@@ -1,14 +1,20 @@
 "use client";
 
 import { GrainGradient } from "@paper-design/shaders-react";
+import { useGrainGradientController } from "@/lib/useGrainGradientController";
+
+const SPEED = 2;
 
 export default function CTAGrainGradient() {
+  const { shaderRef, key } = useGrainGradientController(SPEED);
   return (
     // Backdrop behind the canvas — a resize-triggered WebGL context reset
     // briefly clears the canvas, and without this it flashes stark black
     // instead of this matching dark tone.
     <div className="h-full w-full" style={{ backgroundColor: "#1a1918" }}>
       <GrainGradient
+        key={key}
+        ref={shaderRef}
         className="h-full w-full"
         colors={["#5d5144", "#988364", "#989289"]}
         colorBack="#1a1918"
@@ -16,7 +22,7 @@ export default function CTAGrainGradient() {
         intensity={0.06}
         noise={0.5}
         shape="blob"
-        speed={2}
+        speed={SPEED}
         scale={1}
         rotation={220}
         offsetX={0}

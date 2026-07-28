@@ -219,10 +219,40 @@ export default function BookingForm() {
   }
 
   if (!slotsByDate) {
+    // Roughly matches the real form's height (day row, time row, name/email
+    // row, button) so there's no layout collapse-then-jump once the real
+    // content arrives — a sudden height change here was resizing the page
+    // background's WebGL canvas mid-flight, which briefly cleared to black.
     return (
-      <p className="font-helvetica text-[15px] text-cream/50">
-        Loading availability…
-      </p>
+      <div className="flex animate-pulse flex-col gap-6" aria-label="Loading availability">
+        <div className="flex flex-col gap-2.5">
+          <span className="h-4 w-20 rounded bg-glass" />
+          <div className="flex justify-center gap-2.5">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <span
+                key={i}
+                className="h-[58px] w-16 shrink-0 rounded-lg bg-glass ring-1 ring-glass-border"
+              />
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-col gap-2.5">
+          <span className="h-4 w-24 rounded bg-glass" />
+          <div className="flex flex-wrap justify-center gap-2.5">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <span
+                key={i}
+                className="h-[42px] w-20 rounded-lg bg-glass ring-1 ring-glass-border"
+              />
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <span className="h-[52px] rounded-lg bg-glass ring-1 ring-glass-border" />
+          <span className="h-[52px] rounded-lg bg-glass ring-1 ring-glass-border" />
+        </div>
+        <span className="h-[52px] w-full rounded-full bg-glass" />
+      </div>
     );
   }
 

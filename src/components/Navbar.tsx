@@ -164,6 +164,13 @@ export default function Navbar() {
     };
     measure();
     window.addEventListener("resize", measure);
+    // The "KD" text width is measured in whatever font is painted at the
+    // moment this runs. next/font uses display: swap, so on a slow font
+    // fetch the fallback-font metrics get measured first, and once the real
+    // font swaps in afterward the stored width is stale for the rest of the
+    // page's life — the nav pill then drifts off-center instead of landing
+    // in the middle. Re-measuring once fonts finish loading fixes that.
+    document.fonts?.ready.then(measure);
     return () => window.removeEventListener("resize", measure);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
