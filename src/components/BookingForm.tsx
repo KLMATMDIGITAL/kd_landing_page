@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useLenis } from "lenis/react";
 import ConfettiButton, { type ConfettiButtonHandle } from "./ConfettiButton";
 import { isValidEmail, isValidName } from "@/lib/bookingValidation";
 import { getStoredUtmParams } from "@/lib/utm";
@@ -55,6 +56,19 @@ export default function BookingForm() {
   );
   const [submitError, setSubmitError] = useState<string | null>(null);
   const confettiRef = useRef<ConfettiButtonHandle>(null);
+  const successRef = useRef<HTMLDivElement>(null);
+  const lenis = useLenis();
+
+  // The success card is far shorter than the full form it replaces (day
+  // picker, time picker, name/email all disappear at once) — without this,
+  // whatever scroll position the user was at over the old, taller form is
+  // left stranded, reading as a big dead gap between the card and the
+  // footer. Scrolling the card into view re-centers the page on what's
+  // actually there now.
+  useEffect(() => {
+    if (status !== "success" || !successRef.current) return;
+    lenis?.scrollTo(successRef.current, { offset: -120, duration: 1 });
+  }, [status, lenis]);
 
   useEffect(() => {
     if (alreadyBookedThisSession) return;
@@ -164,7 +178,10 @@ export default function BookingForm() {
   if (status === "success" && selectedSlot) {
     const label = formatDayLabel(selectedDate!);
     return (
-      <div className="rounded-2xl bg-glass px-8 py-10 text-center ring-1 ring-glass-border">
+      <div
+        ref={successRef}
+        className="rounded-2xl bg-glass px-8 py-10 text-center ring-1 ring-glass-border"
+      >
         <h3 className="font-serif text-[1.75rem] text-white">You&apos;re booked.</h3>
         <p className="mt-3 font-helvetica text-[16px] leading-[1.5] text-cream/70">
           {label.weekday}, {label.month} {label.day} at {formatTimeLabel(selectedSlot)}.
