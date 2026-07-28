@@ -75,6 +75,19 @@ export default function RootLayout({
         {process.env.NEXT_PUBLIC_GTM_ID && (
           <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
         )}
+        {/* @next/third-parties only injects the <script> pair — GTM's own
+            install instructions also call for this <noscript> fallback
+            immediately after <body>, for visitors with JS disabled. */}
+        {process.env.NEXT_PUBLIC_GTM_ID && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${process.env.NEXT_PUBLIC_GTM_ID}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
+        )}
         <OrganizationSchema />
         <UtmCapture />
         <SmoothScroll />
