@@ -37,7 +37,8 @@
 html {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* legacy Edge */
-  overscroll-behavior-y: none;
+  overscroll-behavior: none;
+  overflow-x: hidden;
 }
 
 /* Site-wide, including any future pages — no text should be selectable/draggable */
@@ -55,7 +56,8 @@ html::-webkit-scrollbar {
 body {
   background: var(--color-bg);
   color: var(--color-cream);
-  overscroll-behavior-y: none;
+  overscroll-behavior: none;
+  overflow-x: hidden;
 }
 
 .edge {

@@ -16,7 +16,13 @@ import { GrainGradient } from "@paper-design/shaders-react";
 //    once the colors already match the background.
 export default function GrainOverlay({ className = "" }: { className?: string }) {
   return (
-    <div className={`pointer-events-none absolute inset-0 ${className}`}>
+    <div
+      className={`pointer-events-none absolute inset-0 ${className}`}
+      style={{ backgroundColor: "#1a1918" }}
+    >
+      {/* Backdrop behind the canvas — a resize-triggered WebGL context reset
+          briefly clears the canvas, and without this it flashes stark black
+          instead of this matching dark tone. */}
       <GrainGradient
         className="h-full w-full"
         colors={["#1a1918"]}

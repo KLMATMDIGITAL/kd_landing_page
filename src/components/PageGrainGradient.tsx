@@ -7,7 +7,13 @@ import { GrainGradient } from "@paper-design/shaders-react";
 // as a faint tint across the whole page rather than a bright hero blob.
 export default function PageGrainGradient({ className = "" }: { className?: string }) {
   return (
-    <div className={`pointer-events-none absolute inset-0 opacity-25 ${className}`}>
+    <div
+      className={`pointer-events-none absolute inset-0 opacity-25 ${className}`}
+      style={{ backgroundColor: "#1b1a18" }}
+    >
+      {/* The canvas briefly clears on any resize-triggered WebGL context
+          reset (viewport width/height change) — this backdrop shows through
+          during that gap instead of a stark black flash. */}
       <GrainGradient
         className="h-full w-full"
         colors={["#9d8772", "#ffdca8", "#fff5e5"]}

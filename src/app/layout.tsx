@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Instrument_Serif } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GoogleTagManager } from "@next/third-parties/google";
@@ -48,6 +48,13 @@ export const metadata: Metadata = {
       "We design and deploy high-utility mobile applications and targeted digital marketplaces engineered to simplify complex workflows and connect regional ecosystems.",
   },
   verification: { google: "y0oKH5wbS7MHs8P3-5jJAa_vBID61bWVJJM3JSX7nZA" },
+};
+
+// Without this, iOS Safari guesses a chrome/status-bar color instead of
+// matching the page — which is what read as a stray cream bar up top.
+export const viewport: Viewport = {
+  themeColor: "#131210",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
