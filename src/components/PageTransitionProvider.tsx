@@ -42,14 +42,13 @@ const SAFETY_TIMEOUT_MS = DOOR_DURATION * 1000 + 1000;
 // The curtain-door transition briefly covers the entire viewport in solid
 // gold. iOS Safari's dynamic status-bar tinting samples page color around
 // navigation and can latch onto that gold instead of the static theme-color
-// meta tag once the doors reopen — toggling the attribute nudges Safari to
-// re-read and re-sync it.
+// meta tag once the doors reopen. This re-affirms the correct value with a
+// single synchronous write — no empty-then-restore step, since a prior
+// version of this relied on requestAnimationFrame to restore the value and
+// that callback didn't reliably fire, leaving the tag genuinely blank.
 function reaffirmThemeColor() {
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (!meta) return;
-  const current = meta.getAttribute("content");
-  meta.setAttribute("content", "");
-  requestAnimationFrame(() => meta.setAttribute("content", current ?? "#131210"));
+  meta?.setAttribute("content", "#131210");
 }
 
 function settleWithin<T>(promise: Promise<T>, ms: number): Promise<void> {
