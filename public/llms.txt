@@ -1,0 +1,16 @@
+# KLMATM DIGITAL
+
+> KLMATM DIGITAL is a digital utility and mobile software studio that designs and deploys high-utility mobile applications and targeted digital marketplaces, simplifying complex workflows and connecting regional ecosystems.
+
+KLMATM DIGITAL builds custom mobile apps and digital marketplace platforms for service businesses — empathetic, privacy-first tools for complicated real-world processes like logistics, life transitions, and workflow automation.
+
+## Pages
+
+- [Home](https://klmatmdigital.com/): Overview of the studio and its flagship work.
+- [About](https://klmatmdigital.com/about): The studio's philosophy — empathetic design, privacy-first defaults, simplifying complexity.
+- [Approach](https://klmatmdigital.com/approach): How KLMATM DIGITAL turns real-world friction into guided digital products, step by step.
+- [Contact](https://klmatmdigital.com/contact): Book a call directly on the calendar.
+
+## Optional
+
+- [Sitemap](https://klmatmdigital.com/sitemap.xml): Full list of indexed pages.

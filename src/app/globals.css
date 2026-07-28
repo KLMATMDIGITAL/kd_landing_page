@@ -83,3 +83,23 @@ body {
 .pulse-dot {
   animation: dot-pulse 1.8s ease-in-out infinite;
 }
+
+@keyframes aurora-drift-1 {
+  0%,
+  100% {
+    transform: translate(-8%, -10%) scale(1);
+  }
+  50% {
+    transform: translate(10%, 6%) scale(1.2);
+  }
+}
+
+@keyframes aurora-drift-2 {
+  0%,
+  100% {
+    transform: translate(8%, 10%) scale(1.15);
+  }
+  50% {
+    transform: translate(-10%, -4%) scale(1);
+  }
+}

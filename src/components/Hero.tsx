@@ -1,12 +1,21 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLenis } from "lenis/react";
+import { getGsap } from "@/lib/gsap";
+import BlurWords from "./BlurWords";
+import HeroGrainGradient from "./HeroGrainGradient";
+import CircularText from "./CircularText";
+import CTAButton from "./CTAButton";
 
 export default function Hero() {
   const [scrolled, setScrolled] = useState(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const subtextRef = useRef<HTMLSpanElement>(null);
+  const buttonRevealRef = useRef<HTMLDivElement>(null);
 
+  // Native scroll listener — the only path when Lenis is off (prefers-reduced-motion).
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 5);
     onScroll();
@@ -14,134 +23,130 @@ export default function Hero() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Lenis takes over native scroll entirely when active, so the listener above
+  // never fires in that case — this is the actual path when smooth scroll is on.
+  useLenis((lenis) => {
+    setScrolled(lenis.scroll > 5);
+  });
+
+  // One-time entrance choreography on load — not scroll-triggered, since the
+  // Hero is always visible on first paint.
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) return;
+
+    const heading = headingRef.current;
+    const subtextEl = subtextRef.current;
+    const buttonReveal = buttonRevealRef.current;
+    if (!heading || !subtextEl || !buttonReveal) return;
+
+    const { gsap } = getGsap();
+    const headingWords = heading.querySelectorAll("[data-word]");
+    const words = subtextEl.querySelectorAll("[data-word]");
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ delay: 0.2 });
+      // Heading, subtext, and button all start together (same beat as the
+      // navbar's own entrance, which shares this 0.2s delay) instead of the
+      // subtext waiting for the heading to finish — one unhurried wave
+      // instead of two sequential ones. Heading's per-word duration/stagger
+      // is slowed down so it doesn't read as rushed next to the subtext's
+      // naturally longer (more words) blur-in.
+      tl.set(headingWords, { opacity: 0, filter: "blur(10px)" })
+        .set(words, { opacity: 0, filter: "blur(10px)" })
+        .set(buttonReveal, { yPercent: 100 })
+        .to(
+          headingWords,
+          {
+            opacity: 1,
+            filter: "blur(0px)",
+            duration: 1,
+            stagger: 0.08,
+            ease: "power2.out",
+          },
+          0
+        )
+        .to(
+          words,
+          {
+            opacity: 1,
+            filter: "blur(0px)",
+            duration: 0.6,
+            stagger: 0.05,
+            ease: "power2.out",
+          },
+          0
+        )
+        .to(buttonReveal, { yPercent: 0, duration: 0.9, ease: "power3.out" }, 0);
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
       id="hero"
-      className="relative flex h-screen min-h-[720px] w-full items-end overflow-hidden bg-bg"
+      className="relative z-10 flex h-screen min-h-[720px] w-full items-center bg-bg"
     >
-      <div className="absolute inset-0">
-        <Image
-          src="/images/kd_hero2.png"
-          alt=""
-          fill
-          priority
-          className="object-cover"
-        />
-        {/* Thin blend into the Flagship section's solid background so the seam isn't abrupt */}
+      {/* One continuous shader canvas — taller than the section itself and
+          unclipped (no overflow-hidden on the section), painting on top of
+          Flagship via the section's own z-10. The fade is a gradient overlay
+          covering the whole extra height, so the animated blobs dim
+          gradually as they drift down rather than ever being hard-clipped
+          by a box edge — they can wander into Flagship and back without a
+          visible cutoff. */}
+      <div className="absolute inset-x-0 top-0 h-[calc(100%+480px)]">
+        <motion.div
+          className="h-full w-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+        >
+          <HeroGrainGradient />
+        </motion.div>
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-24 md:h-40"
+          className="pointer-events-none absolute inset-0"
           style={{
-            background: "linear-gradient(to bottom, transparent 0%, #1a1918 100%)",
+            background:
+              "linear-gradient(to bottom, transparent 0%, transparent calc(100% - 480px), #1a1918 100%)",
           }}
         />
       </div>
 
-      <div className="edge relative z-10 w-full pb-28 md:pb-32">
-        <div className="max-w-[920px]">
+      <div className="edge relative z-10 w-full">
+        <div className="mx-auto max-w-[920px] text-center">
           <h1
+            ref={headingRef}
             className="font-serif italic leading-[1.1] text-cream text-glow"
             style={{ fontSize: "var(--heading-size)" }}
           >
-            Engineering purposeful
+            <BlurWords>Engineering purposeful</BlurWords>
             <br />
-            digital products.
+            <BlurWords>digital products.</BlurWords>
           </h1>
           <p className="mt-5 font-helvetica text-[18px] leading-[1.35] tracking-[-0.05em] text-cream">
-            We design and deploy high-utility mobile applications and
-            targeted digital marketplaces engineered to simplify complex
-            workflows and connect regional ecosystems.
+            <BlurWords ref={subtextRef}>
+              We design and deploy high-utility mobile applications and
+              targeted digital marketplaces engineered to simplify complex
+              workflows and connect regional ecosystems.
+            </BlurWords>
           </p>
 
-          <motion.a
-            href="#flagship"
-            initial="initial"
-            whileHover="hover"
-            className="mt-11 inline-flex items-center gap-5 overflow-hidden bg-glass py-3 pl-9 pr-3 backdrop-blur-[5px] transition-colors hover:bg-white/10"
-            style={{
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 100,
-              borderBottomRightRadius: 100,
-              borderBottomLeftRadius: 20,
-            }}
-          >
-            <motion.span
-              variants={{
-                initial: { textShadow: "0 0 0px rgba(255,245,230,0)" },
-                hover: { textShadow: "0 0 20px rgba(255,245,230,0.7)" },
-              }}
-              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              className="font-serif text-[25px] text-cream"
-            >
-              Explore Our Portfolio
-            </motion.span>
-            <motion.span
-              variants={{
-                initial: { backgroundColor: "#9d8771", boxShadow: "0 0 0px rgba(255,245,230,0)", opacity: 1 },
-                hover: { backgroundColor: "#fff5e6", boxShadow: "0 0 20px rgba(255,245,230,0.7)", opacity: 0.85 },
-              }}
-              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full"
-            >
-              {/* Primary arrow: slides out to top-right */}
-              <motion.svg
-                variants={{
-                  initial: { x: 0, y: 0, color: "#fff5e6" },
-                  hover: { x: 28, y: -28, color: "#9d8771" },
-                }}
-                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                className="absolute"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path
-                  d="M7 7H17V17"
-                  stroke="currentColor"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M7 17L17 7"
-                  stroke="currentColor"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </motion.svg>
-
-              {/* Secondary arrow: slides in from bottom-left */}
-              <motion.svg
-                variants={{
-                  initial: { x: -28, y: 28, color: "#fff5e6" },
-                  hover: { x: 0, y: 0, color: "#9d8771" },
-                }}
-                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                className="absolute"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path
-                  d="M7 7H17V17"
-                  stroke="currentColor"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M7 17L17 7"
-                  stroke="currentColor"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </motion.svg>
-            </motion.span>
-          </motion.a>
+          <div className="mt-11 flex justify-center overflow-hidden">
+            <div ref={buttonRevealRef}>
+              <CTAButton href="#flagship" label="Explore Our Portfolio" />
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div className="absolute bottom-12 right-[var(--edge-padding)] z-10 sm:bottom-16 md:bottom-20">
+        <CircularText
+          text="KLMATM DIGITAL • ENGINEERING PURPOSEFUL PRODUCTS • "
+          spinDuration={22}
+          onHover="speedUp"
+          className="h-[110px] w-[110px] sm:h-[140px] sm:w-[140px] md:h-[170px] md:w-[170px] lg:h-[190px] lg:w-[190px]"
+        />
       </div>
 
       <AnimatePresence>
@@ -149,12 +154,17 @@ export default function Hero() {
           <motion.div
             key="scroll-hint"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1, y: [0, 6, 0] }}
-            exit={{ opacity: 0 }}
-            transition={{
-              opacity: { duration: 0.25 },
-              y: { duration: 1.8, repeat: Infinity, ease: "easeInOut" },
+            animate={{
+              opacity: 1,
+              y: [0, 6, 0],
+              transition: {
+                // Same 0.2s/1s beat as the circular text and the rest of the
+                // Hero entrance, so this doesn't read as arriving separately.
+                opacity: { duration: 1, delay: 0.2, ease: "easeOut" },
+                y: { duration: 1.8, delay: 0.2, repeat: Infinity, ease: "easeInOut" },
+              },
             }}
+            exit={{ opacity: 0, transition: { duration: 0.25 } }}
             className="pointer-events-none absolute inset-x-0 bottom-8 z-10 flex flex-col items-center gap-2"
           >
             <span className="font-helvetica text-[11px] tracking-[0.25em] text-cream/70">
