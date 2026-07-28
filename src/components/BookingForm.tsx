@@ -257,7 +257,7 @@ export default function BookingForm() {
 
       <div className="flex flex-col gap-2.5">
         <span className="font-helvetica text-[16px] font-bold text-cream/80">Pick a day</span>
-        <div className="flex justify-center gap-2.5 overflow-x-auto pb-1">
+        <div className="no-scrollbar -mx-[var(--edge-padding)] flex justify-start gap-2.5 overflow-x-auto px-[var(--edge-padding)] pb-1 md:mx-0 md:justify-center md:px-0">
           {availableDays.map((dateKey) => {
             const label = formatDayLabel(dateKey);
             const isActive = dateKey === selectedDate;

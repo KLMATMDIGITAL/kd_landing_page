@@ -39,6 +39,19 @@ const REVEAL_HOLD_MS = 180;
 // wedging navigate() behind a pending transition that never clears.
 const SAFETY_TIMEOUT_MS = DOOR_DURATION * 1000 + 1000;
 
+// The curtain-door transition briefly covers the entire viewport in solid
+// gold. iOS Safari's dynamic status-bar tinting samples page color around
+// navigation and can latch onto that gold instead of the static theme-color
+// meta tag once the doors reopen — toggling the attribute nudges Safari to
+// re-read and re-sync it.
+function reaffirmThemeColor() {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) return;
+  const current = meta.getAttribute("content");
+  meta.setAttribute("content", "");
+  requestAnimationFrame(() => meta.setAttribute("content", current ?? "#131210"));
+}
+
 function settleWithin<T>(promise: Promise<T>, ms: number): Promise<void> {
   return new Promise((resolve) => {
     let done = false;
@@ -84,7 +97,10 @@ export default function PageTransitionProvider({
         }),
       ]),
       SAFETY_TIMEOUT_MS
-    ).then(() => setActive(false));
+    ).then(() => {
+      setActive(false);
+      reaffirmThemeColor();
+    });
   }, [leftControls, rightControls]);
 
   const navigate = useCallback(
